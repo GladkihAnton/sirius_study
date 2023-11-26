@@ -1,7 +1,7 @@
-import asyncio
 import json
-from pathlib import Path
+import asyncio
 from argparse import ArgumentParser
+from pathlib import Path
 
 from sqlalchemy import insert
 
@@ -24,9 +24,11 @@ async def insert_fixture(filepath: Path):
         await session.execute(query)
         await session.commit()
 
-async def main():
+
+async def main() -> None:
     for file in args.files:
         await insert_fixture(Path(file))
+
 
 if __name__ == '__main__':
     asyncio.run(main())

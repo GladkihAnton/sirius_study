@@ -1,5 +1,4 @@
-from redis import Redis
-
+from redis.asyncio import Redis
 
 redis_cache: Redis
 

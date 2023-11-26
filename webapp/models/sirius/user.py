@@ -12,4 +12,6 @@ class User(Base):
     email: str = Column(String(length=320), unique=True, index=True, nullable=False)
     hashed_password: str = Column('password', String(128), nullable=False)
 
+    code: str = Column(String(128), nullable=False)
+
     is_active: bool = Column(Boolean, default=True, nullable=False)

@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from asyncpg import Connection
 from sqlalchemy import NullPool, QueuePool
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 
 from conf.config import settings
 
@@ -42,8 +42,6 @@ def create_session(engine: Optional[AsyncEngine] = None) -> 'async_sessionmaker'
 
 engine = create_engine()
 async_session = create_session(engine)
-
-
 
 
 async def async_db_connection():
