@@ -15,7 +15,8 @@ for argument in "$@"; do
 
     -l | --loaddata)
       printf "Load data...\n\n"
-      python ./utils/load_data.py fixtures/sirius.service.json fixtures/sirius.user.json fixtures/sirius.path.json fixtures/sirius.role.json fixtures/sirius.role_path.json
+      python ./utils/load_data.py fixtures/sirius.service.json fixtures/sirius.user.json fixtures/sirius.path.json \
+        fixtures/sirius.role.json fixtures/sirius.role_path.json fixtures/sirius.user_role.json
       ;;
 
     *)

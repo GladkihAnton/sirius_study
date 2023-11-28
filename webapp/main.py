@@ -6,10 +6,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from webapp.api.auth.v0.router import auth_router
 from webapp.api.proxy.router import proxy_router
+from webapp.internal.router import internal_router
+from webapp.metrics import PrometheusMiddleware, metrics
 from webapp.on_startup.redis_cache import setup_redis
 
 
 def setup_middleware(app: FastAPI) -> None:
+    app.add_middleware(PrometheusMiddleware, filter_unhandled_paths=True)
+
     # CORS Middleware should be the last.
     # See https://github.com/tiangolo/fastapi/issues/1663 .
     app.add_middleware(
@@ -22,6 +26,9 @@ def setup_middleware(app: FastAPI) -> None:
 
 
 def setup_routers(app: FastAPI) -> None:
+    app.add_route('/metrics', metrics)
+
+    app.include_router(internal_router)
     app.include_router(auth_router)
     app.include_router(proxy_router)
 

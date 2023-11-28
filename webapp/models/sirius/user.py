@@ -1,6 +1,12 @@
+from typing import TYPE_CHECKING, List
+
 from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy.orm import relationship, Mapped
 
 from ..meta import SIRIUS_SCHEMA, Base
+
+if TYPE_CHECKING:
+    from webapp.models.sirius.role import Role
 
 
 class User(Base):
@@ -15,3 +21,8 @@ class User(Base):
     code: str = Column(String(128), nullable=False)
 
     is_active: bool = Column(Boolean, default=True, nullable=False)
+    roles: Mapped[List['Role']] = relationship(
+        'Role',
+        secondary=f'{SIRIUS_SCHEMA}.user_role',
+        back_populates='users',
+    )

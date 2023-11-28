@@ -51,6 +51,9 @@ asyncpg = "^0.28.0"
 alembic = "1.12.1"
 sqlalchemy = "2.0.23"
 
+starlette-prometheus = "0.9.0"
+starlette-context = "0.3.6"
+
 [tool.poetry.group.dev.dependencies]
 autoflake = "2.2.0"
 black = "23.7.0"

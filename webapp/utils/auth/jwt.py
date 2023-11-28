@@ -28,6 +28,7 @@ class JwtAuth:
         common_data = {
             'code': user.code,
             'user_id': user.id,
+            'role_ids': [role.id for role in user.roles]
         }
 
         access_data = {

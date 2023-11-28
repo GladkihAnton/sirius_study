@@ -2,7 +2,7 @@
   {
     "id": 10000,
     "name": "first_path",
-    "path": "/path/to/api",
+    "path": "path/to/api",
     "service_id": 10000,
     "is_active": true,
     "type": "complete"

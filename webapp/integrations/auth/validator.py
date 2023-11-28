@@ -10,10 +10,16 @@ from webapp.utils.auth.jwt import jwt_auth
 
 
 def validate_token(authorization: Annotated[str | None, Header()] = None):
+    if not authorization:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
     return jwt_auth.decode_token(authorization.split()[1])
 
 
 def validate_access_token(authorization: Annotated[str | None, Header()] = None):
+    if not authorization:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
     token = jwt_auth.decode_token(authorization.split()[1])
     if token['type'] != jwt_auth.ACCESS_TOKEN_T:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
@@ -25,6 +31,9 @@ async def validate_refresh_token(
     authorization: Annotated[str | None, Header()] = None,
     redis: Redis = Depends(get_redis),
 ):
+    if not authorization:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
     token = authorization.split()[1]
     parsed_token = jwt_auth.decode_token(token)
     if parsed_token['type'] != jwt_auth.REFRESH_TOKEN_T:

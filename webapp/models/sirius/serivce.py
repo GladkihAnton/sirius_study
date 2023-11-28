@@ -1,6 +1,12 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from typing import List, TYPE_CHECKING
+
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import Mapped, relationship
 
 from ..meta import SIRIUS_SCHEMA, Base
+
+if TYPE_CHECKING:
+    from webapp.models.sirius.path import Path
 
 
 class Service(Base):
@@ -11,3 +17,8 @@ class Service(Base):
 
     name: str = Column(String(length=320), unique=True, index=True, nullable=False)
     url: str = Column(String(length=320), nullable=False)
+
+    paths: Mapped[List['Path']] = relationship(
+        'Path',
+        back_populates='service',
+    )

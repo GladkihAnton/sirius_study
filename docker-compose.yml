@@ -14,6 +14,11 @@ services:
       - ./conf/.env
     volumes:
       - .:/code
+    healthcheck:
+      test: curl --fail http://0.0.0.0:8000/internal/health_check || exit 1
+      interval: 5s
+      timeout: 1s
+      retries: 5
     depends_on:
       redis:
         condition: service_started
@@ -49,6 +54,39 @@ services:
       - "6379:6379"
     networks:
       - layer_network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus_config.yml"
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    depends_on:
+      - web
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    networks:
+      - layer_network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    env_file: grafana/.env
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+    depends_on:
+      - web
+    networks:
+      - layer_network
+
+volumes:
+  prom_data:
 
 networks:
   layer_network:
