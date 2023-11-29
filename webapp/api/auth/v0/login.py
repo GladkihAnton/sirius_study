@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, joinedload
 from starlette import status
 
+from webapp.utils.deps_latency import time_it
 from webapp.api.auth.v0.router import auth_router
 from webapp.db.postgres import async_db_connection
 from webapp.db.redis_cache import get_redis
@@ -17,21 +18,13 @@ from webapp.utils.auth.jwt import jwt_auth
 from webapp.utils.auth.password import hash_password
 
 
-@auth_router.post('/login')
+@auth_router.get('/login')
 async def login(
     body: LoginQuery = Depends(),
     db_session: AsyncSession = Depends(async_db_connection),
     redis: Redis = Depends(get_redis),
 ):
-    query = (
-        select(User)
-        .where(
-            User.email == body.email,
-            User.hashed_password == hash_password(body.password),
-        )
-        .options(selectinload(User.roles))
-    )
-    user: User | None = (await db_session.execute(query)).scalar_one_or_none()
+    user = await _get_user(body, db_session)
 
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
@@ -42,3 +35,16 @@ async def login(
         'access_token': access_token,
         'refresh_token': refresh_token,
     }
+
+
+@time_it
+async def _get_user(body, db_session):
+    query = (
+        select(User)
+        .where(
+            User.email == body.email,
+            User.hashed_password == hash_password(body.password),
+        )
+        .options(selectinload(User.roles))
+    )
+    return (await db_session.execute(query)).scalar_one_or_none()

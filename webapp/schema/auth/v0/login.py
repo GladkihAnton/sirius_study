@@ -1,7 +1,7 @@
-from fastapi import Body
+from fastapi import Body, Query
 from pydantic import BaseModel
 
 
 class LoginQuery(BaseModel):
-    email: str
-    password: str
+    email: str = Query()
+    password: str = Query()
