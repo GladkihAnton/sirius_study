@@ -14,6 +14,7 @@ from webapp.db.postgres import async_db_connection
 from webapp.db.redis_cache import get_redis
 from webapp.integrations.auth.validator import validate_access_token
 from webapp.integrations.proxy.request import do_proxy_request
+from webapp.integrations.redis.rate_limitter import validate_rps
 from webapp.models.sirius.path import Path
 from webapp.models.sirius.role_path import RolePath
 
@@ -54,7 +55,9 @@ async def reverse_proxy(
     if not is_valid_path:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
+    await validate_rps(token['user_id'], redis, 1)
+
     url = service_to_paths[service]['url']
-    await do_proxy_request(request, f'{url}/{path}')
+    # await do_proxy_request(request, f'{url}/{path}')
 
     return ORJSONResponse({})
